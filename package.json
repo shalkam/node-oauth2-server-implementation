@@ -3,8 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "contributors": [
-    { "name": "Manjesh V", "email": "manjeshpv@gmail.com" },
-    { "name": "Yogesh", "email": "yogesum@gmail.com" }
+    {
+      "name": "Manjesh V",
+      "email": "manjeshpv@gmail.com"
+    },
+    {
+      "name": "Yogesh",
+      "email": "yogesum@gmail.com"
+    }
   ],
   "main": "index.js",
   "dependencies": {
@@ -25,11 +31,13 @@
   "devDependencies": {
     "jshint": "^2.9.1",
     "mocha": "^3.1.2",
+    "nodemon": "^1.17.4",
     "should": "^5.0.1",
     "sinon": "^1.13.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha 'test/**/*_test.js'",
+    "dev": "nodemon ./bin/www",
     "start": "node ./bin/www"
   },
   "repository": {

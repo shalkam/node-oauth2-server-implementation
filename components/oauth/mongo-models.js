@@ -15,12 +15,13 @@ function getAccessToken(bearerToken) {
   return OAuthAccessToken
   //User,OAuthClient
     .findOne({access_token: bearerToken})
-    .populate('User')
-    .populate('OAuthClient')
+    .populate('user')
+    .populate('oAuthClient')
     .then(function (accessToken) {
       console.log('at',accessToken)
       if (!accessToken) return false;
       var token = accessToken;
+			token.accessTokenExpiresAt = new Date(token.expires);
       token.user = token.User;
       token.client = token.OAuthClient;
       token.scope = token.scope
@@ -112,15 +113,18 @@ function revokeToken(token) {
 
 
 function saveToken(token, client, user) {
-  console.log("saveToken",token, client, user)
+	const accessToken = {
+		access_token: token.accessToken,
+		expires: new Date(token.accessTokenExpiresAt),
+		// OAuthClient: '12',
+		// User: '123',
+		OAuthClient: client._id.toString(),
+		User: user._id.toString(),
+		scope: token.scope
+	};
+  console.log("saveToken",accessToken, user._id.toString())
   return Promise.all([
-      OAuthAccessToken.create({
-        access_token: token.accessToken,
-        expires: token.accessTokenExpiresAt,
-        OAuthClient: client._id,
-        User: user._id,
-        scope: token.scope
-      }),
+      OAuthAccessToken.create(accessToken),
       token.refreshToken ? OAuthRefreshToken.create({ // no refresh token for client_credentials
         refresh_token: token.refreshToken,
         expires: token.refreshTokenExpiresAt,
@@ -153,17 +157,20 @@ function getAuthorizationCode(code) {
     .populate('User')
     .populate('OAuthClient')
     .then(function (authCodeModel) {
+      console.log(authCodeModel);
       if (!authCodeModel) return false;
       var client = authCodeModel.OAuthClient
       var user = authCodeModel.User
-      return reCode = {
+      var reCode = {
         code: code,
         client: client,
-        expiresAt: authCodeModel.expires,
+        expiresAt: new Date(authCodeModel.expires),
         redirectUri: client.redirect_uri,
         user: user,
         scope: authCodeModel.scope,
       };
+      console.log(reCode);
+      return reCode
     }).catch(function (err) {
       console.log("getAuthorizationCode - Err: ", err)
     });
@@ -176,7 +183,7 @@ function saveAuthorizationCode(code, client, user) {
       expires: code.expiresAt,
       OAuthClient: client._id,
       authorization_code: code.authorizationCode,
-      User: user._id,
+      User: user,
       scope: code.scope
     })
     .then(function () {
@@ -257,4 +264,3 @@ module.exports = {
   //validateScope: validateScope,
   verifyScope: verifyScope,
 }
-

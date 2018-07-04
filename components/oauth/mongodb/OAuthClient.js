@@ -16,4 +16,3 @@ var OAuthClientSchema = new Schema({
 });
 
 module.exports = mongoose.model('OAuthClient', OAuthClientSchema);
-

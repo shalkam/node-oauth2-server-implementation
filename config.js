@@ -12,10 +12,10 @@ module.exports = {
     timezone: '+05:30',
   },
   mongo: {
-    uri: 'mongodb://gloryque:intranet@192.168.0.200:27017/gloryque_quarc'
+    uri: 'mongodb://127.0.0.1:27017/oauth2-example'
   },
   seedDB:false,
   seedMongoDB:false,
-  seedDBForce:true,
+  seedDBForce:false,
   db:'mongo' // mongo,sql if you want to use any SQL change dialect above in sql config
 }
